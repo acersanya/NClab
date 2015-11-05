@@ -1,18 +1,25 @@
 package com.netcracker.sort;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 import java.util.Random;
+import java.util.stream.IntStream;
+
+import org.apache.commons.lang3.ArrayUtils;
+
+
+
 
 public class ArrayGenerator implements Printable, Cloneable {
 
 	//make arrayGenerator as Singleton
-	private static ArrayGenerator generator = new ArrayGenerator();
-	private ArrayGenerator() {
+	
+	public ArrayGenerator() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public static ArrayGenerator getArrayGeneratorInst(){
-		return generator;
-	}
+
 	
 	private int[] array;
 	
@@ -53,6 +60,34 @@ public class ArrayGenerator implements Printable, Cloneable {
 		}
 
 	}
+	
+	/**
+	 * Fill array from 1 to len -1 , last element
+	 * set randomly
+	 * @param length
+	 */
+	@FillArray
+	public void fillArrayOne(int length){
+		Random rand  = new Random();
+		array = IntStream.rangeClosed(0, length).toArray();
+		this.array[length - 1] = rand.nextInt(100);
+	}
+	
+	/**
+	 * Fill array and reverse it
+	 * @param length
+	 */
+	@FillArray
+	public void fillArrayTwo(int length){
+		array = IntStream.rangeClosed(0, length).toArray();
+		ArrayUtils.reverse(array);
+	}
+	
+	@FillArray
+	public void fillArrayThree(int length){
+		array = IntStream.rangeClosed(0, length).toArray();
+	}
+	
 	
 	/**
 	 * Return clone for not changing inside data

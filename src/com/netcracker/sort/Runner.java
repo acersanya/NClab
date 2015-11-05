@@ -1,37 +1,41 @@
 package com.netcracker.sort;
 
-import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import com.netcracker.algospeed.AlgorithmSpeed;
 
 public class Runner {
+	
+	public static final int LENGTh = 1000;
+	
+	
+	private static void reflectionSort(ArrayGenerator array, Sortable[] sortAlgo) {
+		for (Sortable i : sortAlgo) {
+			Method[] methods = i.getClass().getMethods();
+			for (Method method : methods) {
+				MethodInvocation annos = method.getAnnotation(MethodInvocation.class);
+				Method[] fillMethods = array.getClass().getMethods();
+				for (Method j : fillMethods) {
+					FillArray fill = j.getAnnotation(FillArray.class);
+					if (fill != null) {
+						if (annos != null) {
+							try {
+								j.invoke(array,LENGTh);
+								method.invoke(i);
+								ModelView.print((Printable) i);
+								System.out.println();
+							} catch (InvocationTargetException | IllegalAccessException e) {
+								e.printStackTrace();
+							}
+						}
+					}
 
+				}
+
+			}
+		}
+	}
+	
 	public static void main(String[] args) {
-
-		// ArrayGenerator array = new ArrayGenerator();
-		// array.generate(5);
-		// ModelView.print(array);
-		// System.out.println();
-		//
-		// BubbleSort buble = new BubbleSort(array);
-		// buble.sort();
-		// ModelView.print(buble);
-		//
-		//
-		// System.out.println();
-		// ModelView.print(array);
-		//
-		// System.out.println();
-		// MergeSort merge = new MergeSort(array);
-		// ModelView.print(merge);
-		//
-		// System.out.println();
-		// QuickSort s = new QuickSort(array);
-		// ModelView.print(s);
-		//
-		// System.out.println();
-		// SelectionSort selection = new SelectionSort(array);
-		// ModelView.print(selection);
 
 		// AlgorithmSpeed buble = new AlgorithmSpeed(new BubbleSort());
 		// buble.testAlreadySortedArray();
@@ -49,20 +53,18 @@ public class Runner {
 		// AlgorithmSpeed defArraySort = new AlgorithmSpeed(new DefaultSort());
 		// quick.testAlreadySortedArray();
 
-		Printable quick = new QuickSort();
-		Method[] methods = quick.getClass().getMethods();
+		ArrayGenerator array = new ArrayGenerator();
+		array.generate(100);
 
-		for (Method method : methods) {
-			MethodInvocation annos = method.getAnnotation(MethodInvocation.class);
-			if (annos != null) {
-				try {
-					method.invoke(quick);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
+		Sortable[] sortAlgo = new Sortable[4];
+		sortAlgo[0] = new QuickSort(array);
+		sortAlgo[1] = new MergeSort(array);
+		sortAlgo[2] = new DefaultSort(array);
+		sortAlgo[3] = new BubbleSort(array);
 
-		}
+		reflectionSort(array, sortAlgo);
 
 	}
+
+
 }
